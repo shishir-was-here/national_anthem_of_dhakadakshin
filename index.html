@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+    crossorigin="anonymous"
+  />
+  <link rel="stylesheet" href="style.css" />
+  <title>National Anthem of Dhakadakshin</title>
+  <style>
+    #time-display {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px;
+      font-size: 14px;
+      color: #333;
+    }
+    .progress-container {
+      width: 100%;
+      background: #ccc;
+      cursor: pointer;
+    }
+    .progress {
+      background: #ff6347;
+      height: 5px;
+      width: 0%;
+    }
+  </style>
+</head>
+<body>
+  <h1>National Anthem of Dhakadakshin</h1>
+  <div class="music-container" id="music-container">
+    <div class="music-info">
+      <h2 id="title" class="title"></h2>
+      <div id="time-display">
+        <span id="current-time">0:00</span> / <span id="duration">0:00</span>
+      </div>
+      <div class="progress-container" id="progress-container">
+        <div class="progress" id="progress"></div>
+      </div>
+    </div>
+    <audio src="kamran.mp3" id="audio"></audio>
+    <div class="img-container">
+      <img
+        src="kamran.jpg"
+        alt="music-cover"
+        id="cover"
+      />
+    </div>
+    <div class="navigation">
+      <button id="prev" class="action-btn"><i class="fas fa-backward"></i></button>
+      <button id="play" class="action-btn action-btn-big"><i class="fas fa-play"></i></button>
+      <button id="next" class="action-btn"><i class="fas fa-forward"></i></button>
+    </div>
+  </div>
+
+  <script>
+    const musicContainer = document.getElementById("music-container");
+    const playButton = document.getElementById("play");
+    const prevButton = document.getElementById("prev");
+    const nextButton = document.getElementById("next");
+    const audio = document.getElementById("audio");
+    const progress = document.getElementById("progress");
+    const progressContainer = document.getElementById("progress-container");
+    const title = document.getElementById("title");
+    const cover = document.getElementById("cover");
+    const currentTimeEl = document.getElementById("current-time");
+    const durationEl = document.getElementById("duration");
+
+    const songs = ["হে আমার কাকেশ্বরী,তুমি আবার জ্বলে উঠো", "হে আমার কাকেশ্বরী,তুমি আবার জ্বলে উঠো", "ukহে আমার কাকেশ্বরী,তুমি আবার জ্বলে উঠো"];
+    let songIndex = 1;
+
+    function getSongTitle(song) {
+      return song.charAt(0).toUpperCase() + song.slice(1);
+    }
+
+    function loadSong(song) {
+      title.innerText = getSongTitle(song);
+      audio.src = `kamran.mp3`;
+      cover.src = `kamran1.jpg`;
+    }
+
+    function playSong() {
+      musicContainer.classList.add("play");
+      playButton.querySelector("i.fas").classList.remove("fa-play");
+      playButton.querySelector("i.fas").classList.add("fa-pause");
+      audio.play();
+    }
+
+    function pauseSong() {
+      musicContainer.classList.remove("play");
+      playButton.querySelector("i.fas").classList.remove("fa-pause");
+      playButton.querySelector("i.fas").classList.add("fa-play");
+      audio.pause();
+    }
+
+    function prevSong() {
+      songIndex--;
+      if (songIndex < 0) songIndex = songs.length - 1;
+      loadSong(songs[songIndex]);
+      playSong();
+    }
+
+    function nextSong() {
+      songIndex++;
+      if (songIndex > songs.length - 1) songIndex = 0;
+      loadSong(songs[songIndex]);
+      playSong();
+    }
+
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
+    function updateProgress(e) {
+      const { duration, currentTime } = e.srcElement;
+      const progressPercent = (currentTime / duration) * 100;
+      progress.style.width = `${progressPercent}%`;
+      currentTimeEl.textContent = formatTime(currentTime);
+      durationEl.textContent = formatTime(duration) || "0:00";
+    }
+
+    function setProgress(e) {
+      const width = this.clientWidth;
+      const clickX = e.offsetX;
+      const duration = audio.duration;
+      audio.currentTime = (clickX / width) * duration;
+    }
+
+    playButton.addEventListener("click", () => {
+      const isPlaying = musicContainer.classList.contains("play");
+      isPlaying ? pauseSong() : playSong();
+    });
+
+    prevButton.addEventListener("click", prevSong);
+    nextButton.addEventListener("click", nextSong);
+    audio.addEventListener("timeupdate", updateProgress);
+    progressContainer.addEventListener("click", setProgress);
+    audio.addEventListener("ended", nextSong);
+
+    loadSong(songs[songIndex]);
+  </script>
+</body>
+</html>
