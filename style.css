@@ -432,7 +432,7 @@ input[type="range"]:focus::-ms-fill-upper {
   @media (min-width: 481px) and (max-width: 768px) {
     .screen,
     .controls {
-      width: 75%;
+      width: 88%;
     }
   
     h1 {
